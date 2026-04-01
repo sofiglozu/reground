@@ -299,7 +299,7 @@ async function send() {
       });
       if (!res.ok) throw new Error(`Worker error ${res.status}`);
       const data = await res.json();
-      raw = data.content?.map(b => b.text||'').join('') || '';
+raw = data.choices?.[0]?.message?.content || '';
     } else {
       // Dev mode: direct API call (requires CORS to be open — won't work in production hosting)
       throw new Error('No worker URL configured. See setup instructions below.');
