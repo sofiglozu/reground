@@ -8,6 +8,105 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400;1,500&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+  #onboarding-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8,7,6,0.85);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--body);
+  text-align: left;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+#onboarding-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.overlay-content {
+  background: var(--bg2);
+  padding: 30px 35px;
+  border-radius: 12px;
+  max-width: 480px;
+  width: 90%;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.overlay-content h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  margin-bottom: 12px;
+  font-weight: 400;
+  color: var(--bright);
+}
+
+.overlay-content p {
+  font-size: 0.88rem;
+  margin-bottom: 18px;
+  line-height: 1.5;
+  color: var(--dim);
+}
+
+.overlay-content label {
+  display: block;
+  margin: 10px 0 5px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.overlay-content select,
+.overlay-content input[type="text"] {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 14px;
+  border-radius: 6px;
+  border: none;
+  background: var(--bg3);
+  color: var(--bright);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85rem;
+}
+
+.overlay-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.overlay-buttons button {
+  padding: 7px 14px;
+  border-radius: 4px;
+  border: 1px solid var(--line2);
+  font-weight: 400;
+  cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  transition: all 0.15s ease;
+}
+
+#skip-onboarding {
+  background: var(--bg3);
+  color: var(--dim);
+}
+
+#skip-onboarding:hover {
+  background: var(--line2);
+}
+
+#start-onboarding {
+  background: var(--accent);
+  color: var(--bright);
+}
+
+#start-onboarding:hover {
+  filter: brightness(0.85);
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#080706;
@@ -181,6 +280,40 @@ textarea:focus{border-color:var(--muted)}
 </style>
 </head>
 <body>
+  <!-- Onboarding Overlay -->
+<div id="onboarding-overlay">
+  <div class="overlay-content">
+    <h2>Quick Setup</h2>
+    <p>Tell us how you study so the plan is calibrated from the start. Dump what's going on — tests, deadlines, what time things are due.</p>
+
+    <label for="prep-type">What are you primarily preparing for?</label>
+    <select id="prep-type">
+      <option value="tests">Tests/Exams</option>
+      <option value="essays">Essays/FRQs</option>
+      <option value="problem-sets">Problem Sets</option>
+      <option value="mixed">Mixed</option>
+    </select>
+
+    <label for="study-style">How do you usually study?</label>
+    <select id="study-style">
+      <option value="practice-problems">Practice Problems</option>
+      <option value="notes">Rewriting/Organizing Notes</option>
+      <option value="flashcards">Flashcards/Memorization</option>
+      <option value="videos">Watching Videos</option>
+    </select>
+
+    <label for="sleep-time">What time do you usually need to sleep?</label>
+    <input type="text" id="sleep-time" placeholder="e.g., 10:30 PM" />
+
+    <label for="subjects">Subjects you're working on (optional)</label>
+    <input type="text" id="subjects" placeholder="e.g., AP Chem, APUSH" />
+
+    <div class="overlay-buttons">
+      <button id="skip-onboarding">Skip</button>
+      <button id="start-onboarding">Start →</button>
+    </div>
+  </div>
+</div>
 <div class="shell">
 
   <header>
@@ -222,6 +355,23 @@ textarea:focus{border-color:var(--muted)}
 // Replace this URL with your Cloudflare Worker URL after deploying.
 // See the README for instructions.
 // ─────────────────────────────────────────────
+  const overlay = document.getElementById('onboarding-overlay');
+const skipBtn = document.getElementById('skip-onboarding');
+const startBtn = document.getElementById('start-onboarding');
+
+skipBtn.addEventListener('click', () => {
+  overlay.classList.add('hidden');
+  window.regroundSettings = { prepType: 'mixed', studyStyle: 'notes', sleepTime: '', subjects: '' };
+});
+
+startBtn.addEventListener('click', () => {
+  overlay.classList.add('hidden');
+  const prepType = document.getElementById('prep-type').value;
+  const studyStyle = document.getElementById('study-style').value;
+  const sleepTime = document.getElementById('sleep-time').value;
+  const subjects = document.getElementById('subjects').value;
+  window.regroundSettings = { prepType, studyStyle, sleepTime, subjects };
+});
 const WORKER_URL = 'https://reground.sofiapiou22.workers.dev';
 
 const SYSTEM = `You are reground — a private, sharp late-night planning tool for high-achieving students who are spiraling before exams.
