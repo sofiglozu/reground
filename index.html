@@ -372,6 +372,38 @@ startBtn.addEventListener('click', () => {
   const subjects = document.getElementById('subjects').value;
   window.regroundSettings = { prepType, studyStyle, sleepTime, subjects };
 });
+  // Check on page load if onboarding was completed
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('regroundSettings');
+  if (saved) {
+    overlay.classList.add('hidden');
+    window.regroundSettings = JSON.parse(saved);
+  }
+});
+
+// On skip button
+skipBtn.addEventListener('click', () => {
+  overlay.classList.add('hidden');
+  if (!window.regroundSettings) {
+    // Save default values if skipped
+    const defaults = { prepType: 'mixed', studyStyle: 'practice-problems', sleepTime: '', subjects: '' };
+    localStorage.setItem('regroundSettings', JSON.stringify(defaults));
+    window.regroundSettings = defaults;
+  }
+});
+
+// On start button
+startBtn.addEventListener('click', () => {
+  overlay.classList.add('hidden');
+  const prepType = document.getElementById('prep-type').value;
+  const studyStyle = document.getElementById('study-style').value;
+  const sleepTime = document.getElementById('sleep-time').value;
+  const subjects = document.getElementById('subjects').value;
+
+  const settings = { prepType, studyStyle, sleepTime, subjects };
+  localStorage.setItem('regroundSettings', JSON.stringify(settings));
+  window.regroundSettings = settings;
+});
 const WORKER_URL = 'https://reground.sofiapiou22.workers.dev';
 
 const SYSTEM = `You are reground — a private, sharp late-night planning tool for high-achieving students who are spiraling before exams.
