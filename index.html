@@ -8,7 +8,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400;1,500&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  #onboarding-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 9999; color: #f5f5f5; font-family: 'Helvetica Neue', sans-serif; text-align: left; opacity: 1; transition: opacity 0.3s ease; } #onboarding-overlay.hidden { opacity: 0; pointer-events: none; } /* Overlay content box */ .overlay-content { background: #1a1a1a; padding: 30px 40px; border-radius: 15px; max-width: 500px; width: 90%; box-shadow: 0 0 20px rgba(0,0,0,0.5); } .overlay-content h2 { font-size: 1.8rem; margin-bottom: 15px; font-weight: 600; } .overlay-content p { font-size: 0.95rem; margin-bottom: 20px; line-height: 1.4; color: #ccc; } .overlay-content label { display: block; margin: 10px 0 5px; font-size: 0.9rem; color: #ddd; } .overlay-content select, .overlay-content input[type="text"] { width: 100%; padding: 8px 10px; margin-bottom: 15px; border-radius: 6px; border: none; background: #2a2a2a; color: #f5f5f5; font-size: 0.95rem; } .overlay-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; } .overlay-buttons button { padding: 8px 16px; border-radius: 6px; border: none; font-weight: 600; cursor: pointer; transition: background 0.2s ease; } #skip-onboarding { background: #333; color: #aaa; } #skip-onboarding:hover { background: #444; } #start-onboarding { background: #4caf50; color: #fff; } #start-onboarding:hover { background: #45a049; }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#080706;
@@ -182,7 +181,6 @@ textarea:focus{border-color:var(--muted)}
 </style>
 </head>
 <body>
-  <div id="onboarding-overlay"> <div class="overlay-content"> <h2>Quick Setup</h2> <p>Tell us how you study so the plan is calibrated from the start. Dump what's going on — tests, deadlines, how you're feeling, what time things are due.</p> <label for="prep-type">What are you primarily preparing for?</label> <select id="prep-type"> <option value="tests">Tests/Exams</option> <option value="essays">Essays/FRQs</option> <option value="problem-sets">Problem Sets</option> <option value="mixed">Mixed</option> </select> <label for="study-style">How do you usually study?</label> <select id="study-style"> <option value="practice-problems">Practice Problems</option> <option value="notes">Rewriting/Organizing Notes</option> <option value="flashcards">Flashcards/Memorization</option> <option value="videos">Watching Videos</option> </select> <label for="sleep-time">What time do you usually need to sleep?</label> <input type="text" id="sleep-time" placeholder="e.g., 10:30 PM" /> <label for="subjects">Subjects you're working on (optional)</label> <input type="text" id="subjects" placeholder="e.g., AP Chem, APUSH" /> <div class="overlay-buttons"> <button id="skip-onboarding">Skip</button> <button id="start-onboarding">Start</button> </div> </div> </div>
 <div class="shell">
 
   <header>
@@ -453,7 +451,6 @@ inp.addEventListener('input', autoResize);
 inp.addEventListener('keydown', e => {
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') send();
 });
-  // Hide overlay const overlay = document.getElementById('onboarding-overlay'); const skipBtn = document.getElementById('skip-onboarding'); const startBtn = document.getElementById('start-onboarding'); skipBtn.addEventListener('click', () => { overlay.classList.add('hidden'); // you can store default values here if needed }); startBtn.addEventListener('click', () => { overlay.classList.add('hidden'); // grab values and store for plan calibration const prepType = document.getElementById('prep-type').value; const studyStyle = document.getElementById('study-style').value; const sleepTime = document.getElementById('sleep-time').value; const subjects = document.getElementById('subjects').value; // Example: save to local storage or memory window.regroundSettings = { prepType, studyStyle, sleepTime, subjects }; });
 </script>
 </body>
 </html>
