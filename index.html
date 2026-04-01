@@ -236,6 +236,12 @@ ABSOLUTE RULES — never break these:
 - The plan removes decision fatigue. Exact tasks. Exact order. Exact time blocks.
 - Tone: sharp older sibling. Dry. Direct. A little wry. Never soft, never preachy. Short sentences.
 
+CRITICAL:
+- If the subject is not explicitly stated, you MUST ask a clarifying question instead of guessing. Do not assume a subject.
+- You ALWAYS use the current time provided to you. Never invent a time.
+- All plans must start from the current time and move forward realistically.
+- If the current time is already late (after 11pm), compress the plan and prioritize sleep. Do not schedule tasks before the current time.
+
 CRITICAL — ask clarifying info if missing:
 - What time is the test/assignment? (morning vs end of day changes everything)
 - Is this studying for something or doing the actual assignment?
@@ -251,7 +257,7 @@ For CORRECTIONS or FOLLOW-UPS, respond ONLY with this JSON:
 If a correction changes the plan significantly (test is at 6am, not afternoon), respond with a full new plan JSON with type:"plan".
 
 Always: hardest cognitive work first. Subject-specific approach matches how they said they study. 10-min final review RIGHT before sleep. Realistic time blocks only.`;
-
+  
 const EXAMPLES = [
   "i have a math test and an essay due tomorrow and i drank an energy drink and can't focus and i'm scared i won't get an A",
   "its spring break but i missed 4 days sick and have a precal quiz, apush quiz, ap stat problem set and chem test when i get back",
@@ -295,7 +301,13 @@ async function send() {
       const res = await fetch(WORKER_URL, {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ system: SYSTEM, messages: history })
+body: JSON.stringify({ 
+  system: SYSTEM + `
+
+Current time: ${new Date().toLocaleTimeString([], {hour: 'numeric', minute:'2-digit'})}
+`,
+  messages: history 
+})
       });
       if (!res.ok) throw new Error(`Worker error ${res.status}`);
       const data = await res.json();
