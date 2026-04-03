@@ -359,19 +359,6 @@ textarea:focus{border-color:var(--muted)}
 const skipBtn = document.getElementById('skip-onboarding');
 const startBtn = document.getElementById('start-onboarding');
 
-skipBtn.addEventListener('click', () => {
-  overlay.classList.add('hidden');
-  window.regroundSettings = { prepType: 'mixed', studyStyle: 'notes', sleepTime: '', subjects: '' };
-});
-
-startBtn.addEventListener('click', () => {
-  overlay.classList.add('hidden');
-  const prepType = document.getElementById('prep-type').value;
-  const studyStyle = document.getElementById('study-style').value;
-  const sleepTime = document.getElementById('sleep-time').value;
-  const subjects = document.getElementById('subjects').value;
-  window.regroundSettings = { prepType, studyStyle, sleepTime, subjects };
-});
   // Check on page load if onboarding was completed
 window.addEventListener('DOMContentLoaded', () => {
   const saved = localStorage.getItem('regroundSettings');
@@ -421,6 +408,10 @@ ABSOLUTE RULES — never break these:
 CRITICAL:
 - If the subject is not explicitly stated, you MUST ask a clarifying question instead of guessing. Do not assume a subject.
 - You ALWAYS use the current time provided to you. Never invent a time.
+- Use plain direct language a tired 16-year-old can read at midnight. No academic or neuroscience-sounding phrases. Say exactly what you mean in the simplest words possible.
+- Always give realistic time blocks based on how the student said they study. If they handwrite notes, that takes longer than reading — account for this. Never give less than 30 min for a subject that requires handwriting notes. 2-3 practice questions is not enough for a 40 point test 
+- If the student uses language like "I feel worthless", "I hate myself", "I'm so stupid", or similar — add only one sentence before the plan acknowledging it briefly: something like "that feeling is the exhaustion talking, not you." Then move straight into the plan. Do not dwell on it, do not suggest therapy, do not make it a big moment. Just see it and move on.
+- Never suggest only 2-3 practice questions for high-stakes tests. For a test worth 30+ points, recommend substantial practice — at least 10-15 problems for math, or a full topic review. Match the effort to the stakes.
 - All plans must start from the current time and move forward realistically.
 - If the current time is already late (after 11pm), compress the plan and prioritize sleep. Do not schedule tasks before the current time.
 
@@ -472,7 +463,10 @@ async function send() {
   const btn = document.getElementById('sendBtn');
   btn.disabled = true;
 
-  history.push({role:'user', content: text});
+ const settings = window.regroundSettings;
+const context = settings ? `[Student profile: studies by ${settings.studyStyle}, usual sleep time: ${settings.sleepTime || 'not set'}, subjects: ${settings.subjects || 'not specified'}, prep type: ${settings.prepType}]` : '';
+const fullText = context ? `${context}\n${text}` : text;
+history.push({role:'user', content: fullText});
   const typing = addTyping();
 
   try {
